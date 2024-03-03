@@ -4,22 +4,22 @@
 
 import csv
 import sys
+from report import read_portfolio
 
-def portfolio_cost(filename):
+
+def portfolio_cost(filename='Data/portfolio.csv'):
     total_cost = 0
-    with open(filename, 'rt') as f:
-        rows = csv.reader(f)
-        next(f)
-        for row in rows:
-            try:
-                total_cost = total_cost + (int(row[1]) * float(row[2]))
-            except ValueError:
-                print('Warning: Invalid data type found')
+    portfolio = read_portfolio(filename)
+    for stock in portfolio:
+        total_cost += stock['shares'] * stock['price']
     return total_cost
 
-if len(sys.argv) == 2:
-    filename = sys.argv[1]
-else:
-    filename = 'Data/portfolio.csv'
-cost = portfolio_cost(filename)
-print(f'Total Cost: {cost:.2f}')
+
+def main(argv):
+    print(f'Total cost {portfolio_cost(argv[1])}')
+    
+
+if __name__ == '__main__':
+    import sys
+    main(sys.argv)
+    
