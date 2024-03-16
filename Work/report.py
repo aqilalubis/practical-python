@@ -5,12 +5,14 @@
 import csv
 import sys
 from fileparse import parse_csv
+from stock import Stock
+import tableformat
 
 
 def read_portfolio(filename):
     with open(filename) as f:
         portfolio = parse_csv(f,select=['name','shares','price'],types=[str,int,float])
-                
+    portfolio = [Stock(p['name'], p['shares'], p['price']) for p in portfolio]
     return portfolio
     
 
@@ -21,33 +23,47 @@ def read_prices(filename):
     return prices
         
             
-def make_report(portfolio, prices):
+def make_report_data(portfolio, prices):
     report = []
     
     for stock in portfolio:
-        price = prices[stock['name']]
-        change = price - stock['price']
-        report.append((stock['name'], stock['shares'], '$' + str(price), change))
+        price = prices[stock.name]
+        change = price - stock.price
+        report.append((stock.name, stock.shares, price, change))
         
     return report
 
 
-def print_report(report):
-    headers = ('Name', 'Shares', 'Price', 'Change')
-    print('%10s %10s %10s %10s' %headers)
-    print(('-' * 10 + ' ') * len(headers))
+def print_report(reportdata, formatter):
+    '''
+    Print a nicely formatted table from a list of (name, shares, price, change) tuples.
+    '''
+    formatter.headings(['Name', 'Shares', 'Price', 'Change'])
+    
+    for name, shares, price, change in reportdata:
+        rowdata = [name, str(shares), f'{price:0.2f}', f'{change:0.2f}']
+        formatter.row(rowdata)         
 
-    for row in report:
-        print('%10s %10d %10s %10.2f' %row)          
 
+def portfolio_report(portfoliofile, pricefile, fmt='txt'):
+    '''
+    Make a stock report given portfolio and price data files.
+    '''
+    # Read data files
+    portfolio = read_portfolio(portfoliofile)
+    prices = read_prices(pricefile)
 
-def portfolio_report(filename1, filename2):
-    portfolio = read_portfolio(filename1)
-    prices = read_prices(filename2)
-    print_report(make_report(portfolio, prices))
+    # Create the report data
+    report = make_report_data(portfolio, prices)
+
+    # Print it out
+    formatter = tableformat.create_formatter(fmt)
+    print_report(report, formatter)
+
+    
     
 def main(argv):
-    portfolio_report(argv[1], argv[2])
+    portfolio_report(argv[1], argv[2], argv[3])
     
 
 if __name__ == '__main__':
