@@ -7,13 +7,18 @@ import sys
 from fileparse import parse_csv
 from stock import Stock
 import tableformat
+from portfolio import Portfolio
 
 
 def read_portfolio(filename):
+    '''
+    Read a stock portfolio file into a list of dictionaries with keys
+    name, shares, and price.
+    '''
     with open(filename) as f:
         portfolio = parse_csv(f,select=['name','shares','price'],types=[str,int,float])
     portfolio = [Stock(p['name'], p['shares'], p['price']) for p in portfolio]
-    return portfolio
+    return Portfolio(portfolio)
     
 
 def read_prices(filename):
