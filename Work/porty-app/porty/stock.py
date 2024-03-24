@@ -1,4 +1,4 @@
-from typedproperty import typedproperty
+from .typedproperty import typedproperty
 
 String = lambda name: typedproperty(name, str)
 Integer = lambda name: typedproperty(name, int)

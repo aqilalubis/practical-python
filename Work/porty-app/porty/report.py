@@ -4,10 +4,10 @@
 
 import csv
 import sys
-from fileparse import parse_csv
-from stock import Stock
-import tableformat
-from portfolio import Portfolio
+from .fileparse import parse_csv
+from .stock import Stock
+from . import tableformat
+from .portfolio import Portfolio
 
 # This file sets up basic configuration of the logging module.
 # Change settings here to adjust logging output as needed.

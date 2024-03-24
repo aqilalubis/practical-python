@@ -1,0 +1,1 @@
+A package that reads various stock portfolio/price data files and displays the information.
