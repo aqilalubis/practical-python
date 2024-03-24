@@ -10,20 +10,19 @@ import tableformat
 from portfolio import Portfolio
 
 
-def read_portfolio(filename):
+def read_portfolio(filename, **opts):
     '''
     Read a stock portfolio file into a list of dictionaries with keys
     name, shares, and price.
     '''
-    with open(filename) as f:
-        portfolio = parse_csv(f,select=['name','shares','price'],types=[str,int,float])
-    portfolio = [Stock(p['name'], p['shares'], p['price']) for p in portfolio]
-    return Portfolio(portfolio)
+    with open(filename) as lines:
+        port = Portfolio.from_csv(lines, **opts)
+    return port
     
 
 def read_prices(filename):
-    with open(filename) as f:
-        prices = dict(parse_csv(f,types=[str,float],has_headers=False))
+    with open(filename) as lines:
+        prices = dict(parse_csv(lines,types=[str,float],has_headers=False))
                 
     return prices
         
@@ -68,7 +67,7 @@ def portfolio_report(portfoliofile, pricefile, fmt='txt'):
     
     
 def main(argv):
-    portfolio_report(argv[1], argv[2], argv[3])
+    portfolio_report(*argv[1:])
     
 
 if __name__ == '__main__':
